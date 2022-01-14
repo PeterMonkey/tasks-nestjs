@@ -1,5 +1,6 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateTaskDTO } from './dto/create-task.dto';
+import { GetTasksFilterDTO } from './dto/get-task-filter.dto';
 import { Task, TaskStatus } from './task.model';
 import { TasksService } from './tasks.service';
 
@@ -10,8 +11,14 @@ export class TasksController {
     }
 
     @Get()
-    getAllTasks(): Task[] {
-        return this.tasksService.getAllTasks()
+    getTasks(@Query() filterDTO: GetTasksFilterDTO): Task[] {
+        //Si hay un filtro definido, llamara a tasksService.getTasksWithFilters
+        //si no obtendra todas las tareas
+        if(Object.keys(filterDTO).length){
+            return this.tasksService.getTasksWithFilters(filterDTO)
+        } else {
+            return this.tasksService.getAllTasks() 
+        }
     }
 
     @Get('/:id')
