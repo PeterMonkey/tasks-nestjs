@@ -2,16 +2,14 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestj
 import { CreateTaskDTO } from './dto/create-task.dto';
 import { GetTasksFilterDTO } from './dto/get-task-filter.dto';
 import { UpdateTaskStatus } from './dto/update-task.dto';
-import { Task, TaskStatus } from './task.model';
+import { TaskStatus } from './task-status.enum';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
 export class TasksController {
-    constructor(private tasksService: TasksService) {
-        
-    }
+    constructor(private tasksService: TasksService) {}
 
-    @Get()
+    /*@Get()
     getTasks(@Query() filterDTO: GetTasksFilterDTO): Task[] {
         //Si hay un filtro definido, llamara a tasksService.getTasksWithFilters
         //si no obtendra todas las tareas
@@ -44,5 +42,5 @@ export class TasksController {
         ): Task{
             const { status } = updateTaskStatusDto
             return this.tasksService.updateTaskStatus(id, status)
-    }
+    }*/
 }
