@@ -13,30 +13,9 @@ export class TasksService {
         private taskRepository: TaskRepository
     ){}
 
-    // getAllTasks(): Task[] {
-    //     return this.tasks; 
-    // }
-
-    // getTasksWithFilters(filterDTO: GetTasksFilterDTO): Task[] {
-    //     const { status, search } = filterDTO;
-
-    //     let tasks =this.getAllTasks();
-
-    //     if(status){
-    //         tasks = tasks.filter(task => task.status === status)
-    //     }
-    //     if(search){
-    //         tasks = tasks.filter(task => {
-    //             if(task.title.includes(search) || task.description.includes(search)){
-    //                 return true;
-    //             }
-
-    //             return false;
-    //         })
-    //     }
-
-    //     return tasks
-    // }
+    getTasks(filter: GetTasksFilterDTO): Promise<Task[]>{
+        return this.taskRepository.getTask(filter);
+    }
 
     async getTaskById(id: string): Promise<Task>{
         const found = await this.taskRepository.findOne(id);
@@ -52,31 +31,21 @@ export class TasksService {
         return this.taskRepository.createTask(createTaskDto);
     }
 
-    // createTask(createTaskDTO: CreateTaskDTO ): Task {
-
-    //     const { title, description } = createTaskDTO;
-
-    //     const task: Task = {
-    //         id: uuid(),
-    //         title,
-    //         description,
-    //         status: TaskStatus.OPEN
-    //     }
-
-    //     this.tasks.push(task);
-
-    //     return task;
-    // }
     
-    // deleteTask(id: string): void{
-    //     const found = this.getTaskById(id);
-    //     this.tasks = this.tasks.filter(task => task.id !== found.id)
-    // }
+    async deleteTask(id: string): Promise<void>{
+        const result = await this.taskRepository.delete(id);
+        
+        if (result.affected === 0) {
+            throw new NotFoundException(`Task with ID "${id}" not found`)
+        }
+    }
 
-    // updateTaskStatus(id: string, status: TaskStatus): Task{
-    //     const task =this.getTaskById(id);
-    //     task.status = status;
+    async updateTaskStatus(id: string, status: TaskStatus): Promise<Task>{
+        const task = await this.getTaskById(id);
 
-    //     return task;
-    // }
+        task.status = status;
+        await this.taskRepository.save(task);
+
+        return task;
+    }
 }
